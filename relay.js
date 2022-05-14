@@ -33,7 +33,6 @@ export function relayConnect(url, onNotice = () => {}, onError = () => {}) {
     ws = new WebSocket(url)
 
     ws.onopen = () => {
-      console.log('connected to', url)
       resolveOpen()
 
       // restablish old subscriptions
@@ -47,7 +46,6 @@ export function relayConnect(url, onNotice = () => {}, onError = () => {}) {
       }
     }
     ws.onerror = err => {
-      console.log('error connecting to relay', url)
       onError(err)
     }
     ws.onclose = () => {
@@ -57,9 +55,6 @@ export function relayConnect(url, onNotice = () => {}, onError = () => {}) {
       if (nextAttemptSeconds > 14400) {
         nextAttemptSeconds = 14400 // 4 hours
       }
-      console.log(
-        `relay ${url} connection closed. reconnecting in ${nextAttemptSeconds} seconds.`
-      )
       setTimeout(async () => {
         try {
           connect()
@@ -81,7 +76,6 @@ export function relayConnect(url, onNotice = () => {}, onError = () => {}) {
         if (data[0] === 'NOTICE') {
           if (data.length < 2) return
 
-          console.log('message from relay ' + url + ': ' + data[1])
           onNotice(data[1])
           return
         }
